@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.json.simple.JSONObject;
 
+
 @XmlRootElement(name = "EncryptRequest")
 public class EncryptRequest {
 	@XmlElement(name = "target")
