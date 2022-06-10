@@ -72,7 +72,7 @@ public Response SecurityCategoryTagSet(@PathParam("id") String id)  {
 	
 	List<SimpleSecurityCategoryTagSet> myList = new ArrayList<SimpleSecurityCategoryTagSet>();
 	for(SecurityCategoryTagSet currentSecurityCategoryTagSet:spif.getSecurityCategoryTagSets().getSecurityCategoryTagSet()) {
-		log.trace("Handling Security Category Tag Set {} - {}", currentSecurityCategoryTagSet.getId(),id);
+		log.trace("Handling Security Category Tag Set {} - {}", currentSecurityCategoryTagSet.getId());
 		if (!currentSecurityCategoryTagSet.getId().equals(id)) continue; // not the object id we are looking for
 		for (SecurityCategoryTag categoryTag:currentSecurityCategoryTagSet.getSecurityCategoryTag() ) {
 			log.trace("Security Category Tag {}", categoryTag.getName());
