@@ -23,6 +23,7 @@ import org.xmlspif.spif.SPIF;
 import org.xmlspif.spif.SecurityCategoryTag;
 import org.xmlspif.spif.SecurityCategoryTagSet;
 import org.xmlspif.spif.TagCategory;
+import org.xmlspif.spif.TagType;
 
 @Path("/securitytagsets")
 public class SecurityCategoryTagSets {
@@ -49,9 +50,17 @@ public Response SecurityCategoryTagSets()  {
 		log.trace("Get  Security Category Tag Sets end - No Tag set");
 		return Response.status(Response.Status.OK).entity("").build();
 	}
+	
+	// This will work only if one <securityCategoryTag> follows <securityCategoryTagSet> clauses
+	// (should be the case if the xsd is conformant)
 	List<SimpleSecurityCategoryTagSet> myList = new ArrayList<SimpleSecurityCategoryTagSet>();
 	for(SecurityCategoryTagSet currentSecurityCategoryTagSet:spif.getSecurityCategoryTagSets().getSecurityCategoryTagSet()) {
-		myList.add(new SimpleSecurityCategoryTagSet(currentSecurityCategoryTagSet.getName(), currentSecurityCategoryTagSet.getId()));
+		TagType myTagType = currentSecurityCategoryTagSet.getSecurityCategoryTag().get(0).getTagType();
+		if (myTagType == null) myTagType =  TagType.fromValue("notApplicable");
+		
+		SimpleSecurityCategoryTagSet ssc = new SimpleSecurityCategoryTagSet(
+				currentSecurityCategoryTagSet.getName(), currentSecurityCategoryTagSet.getId(), myTagType);
+		myList.add(ssc);
 	} // for
 	
 	log.trace("Get Security Category Tag Sets end");
@@ -72,12 +81,13 @@ public Response SecurityCategoryTagSet(@PathParam("id") String id)  {
 	
 	List<SimpleSecurityCategoryTagSet> myList = new ArrayList<SimpleSecurityCategoryTagSet>();
 	for(SecurityCategoryTagSet currentSecurityCategoryTagSet:spif.getSecurityCategoryTagSets().getSecurityCategoryTagSet()) {
-		log.trace("Handling Security Category Tag Set {} - {}", currentSecurityCategoryTagSet.getId());
 		if (!currentSecurityCategoryTagSet.getId().equals(id)) continue; // not the object id we are looking for
-		for (SecurityCategoryTag categoryTag:currentSecurityCategoryTagSet.getSecurityCategoryTag() ) {
-			log.trace("Security Category Tag {}", categoryTag.getName());
+		log.trace("Security Category Tag Set {} - {}", currentSecurityCategoryTagSet.getId(),currentSecurityCategoryTagSet.getName());
+		for (SecurityCategoryTag categoryTag:currentSecurityCategoryTagSet.getSecurityCategoryTag()) {
+			log.trace("Security Category Tag: {} ({})", categoryTag.getName(), categoryTag.getTagType());
+
 		}
-		log.trace("Found Security Category Tag Set {} - {}", currentSecurityCategoryTagSet.getId(),id);
+		
 		return Response.status(Response.Status.OK).entity(currentSecurityCategoryTagSet.getSecurityCategoryTag()).build();
 	} // for
 	
